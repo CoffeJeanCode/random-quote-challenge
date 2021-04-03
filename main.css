@@ -1,0 +1,140 @@
+ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.material-icons {
+  font-family: "Material Icons";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px; /* Preferred icon size */
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "liga";
+}
+
+.material-icons.md-18 {
+  font-size: 18px;
+}
+.material-icons.md-24 {
+  font-size: 24px;
+}
+.material-icons.md-36 {
+  font-size: 36px;
+}
+.material-icons.md-48 {
+  font-size: 48px;
+}
+
+.container {
+  max-width: 50rem;
+  margin: auto;
+}
+.container-sm {
+  max-width: 30rem;
+  margin: auto;
+}
+
+:root {
+  font-size: 20px;
+}
+
+body {
+  max-width: 100vw;
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: #fafafa;
+}
+
+.header {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.random {
+  display: flex;
+  align-items: center;
+  padding: 0.3rem 0.8rem;
+  background: transparent;
+  color: #444;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  border-radius: 0.2rem;
+}
+
+.random:hover {
+  background: #f1f1f1;
+}
+
+.random span {
+  transition: all 0.5s ease-in;
+}
+
+.random:hover span {
+  transform: rotate(180deg);
+}
+
+.quote {
+  height: 80vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.blockquote {
+  margin: 1rem 0;
+  font-size: 1.3rem;
+  position: relative;
+}
+
+.blockquote:after {
+  content: "";
+  width: 0.5rem;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: -3rem;
+  background: rgb(255, 230, 150);
+}
+
+.listQuotes li {
+  margin: 3rem 0;
+}
+
+.authorText {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1rem;
+  margin: 2rem 0;
+  color: #444;
+  border-radius: 0.3rem;
+}
+
+.authorText:hover {
+  background: #444;
+  color: #fafafa;
+}
+
+.authorText:hover span {
+  animation: arrow 1s ease forwards;
+}
+
+@keyframes arrow {
+  50% {
+    transform: translateX(-1rem);
+  }
+  100% {
+    transform: translateX(0.5rem);
+  }
+}
