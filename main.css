@@ -81,7 +81,7 @@ body {
 }
 
 .random:hover span {
-  transform: rotate(180deg);
+  transform: rotate(360deg);
 }
 
 .quote {

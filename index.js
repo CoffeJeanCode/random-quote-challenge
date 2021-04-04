@@ -1,10 +1,12 @@
+const compose = (...fn) => (x) => fn.reduceRight((x, fn) => fn(x), x);
 const toJSON = (x) => x.json();
 const toHTML = (tag, x, attr = "") => `<${tag} ${attr}>${x}</${tag}>`;
 const display = (el, content, method = "textContent") => {
   el[method] = content;
 };
 const applyCss = (el, prop, value) => (el.style[prop] = value);
-const getState = (state) => JSON.parse(JSON.stringify(state));
+const getState = compose(JSON.parse, JSON.stringify);
+
 const setState = (state, newState) => {
   for (const key in newState) {
     if (key in state) {
@@ -14,9 +16,10 @@ const setState = (state, newState) => {
 };
 
 const url = "https://quote-garden.herokuapp.com/api/v3";
+
 const getBlockQuote = () => ({
   random: fetch(`${url}/quotes/random`).then(toJSON),
-  byAuthor: (search) => fetch(`${url}/quotes?${search}`).then(toJSON),
+  byAuthor: (author) => fetch(`${url}/quotes?$author=${author}`).then(toJSON),
 });
 
 const app = () => {
@@ -30,42 +33,46 @@ const app = () => {
   const sectionQuote = document.getElementById("quote");
   const sectionAuthorQuotes = document.getElementById("authorQuotes");
 
-  const displayQuote = () => {
-    getBlockQuote().random.then(({ data: [quote] }) => {
-      applyCss(sectionQuote, "display", "flex");
-      applyCss(sectionAuthorQuotes, "display", "none");
+  const displayQuote = async () => {
+    const {
+      data: [quote],
+    } = await getBlockQuote().random;
 
-      setState(state, { infoQuote: quote });
+    applyCss(sectionQuote, "display", "flex");
+    applyCss(sectionAuthorQuotes, "display", "none");
 
-      display(blockQuote, `"${getState(state).infoQuote.quoteText}"`);
-      display(
-        authorText,
-        `${getState(state).infoQuote.quoteAuthor}
-        <span class="material-icons">trending_flat</span>
-        `,
-        "innerHTML"
-      );
-    });
+    setState(state, { infoQuote: quote });
+
+    display(blockQuote, `"${getState(state).infoQuote.quoteText}"`);
+    display(
+      authorText,
+      `${getState(state).infoQuote.quoteAuthor}
+      <span class="material-icons">trending_flat</span>
+      `,
+      "innerHTML"
+    );
   };
 
   displayQuote();
 
   randomBtn.addEventListener("click", displayQuote);
 
-  authorText.addEventListener("click", () => {
-    getBlockQuote()
-      .byAuthor(`author=${getState(state).infoQuote.quoteAuthor}`)
-      .then(({ data }) => {
-        applyCss(sectionAuthorQuotes, "display", "block");
-        applyCss(sectionQuote, "display", "none");
+  authorText.addEventListener("click", async () => {
+    const { data } = await getBlockQuote().byAuthor(
+      getState(state).infoQuote.quoteAuthor
+    );
 
-        const htmlList = data
-          .map((quote) => toHTML("li", quote.quoteText, "class=blockquote"))
-          .join("");
+    applyCss(sectionAuthorQuotes, "display", "block");
+    applyCss(sectionQuote, "display", "none");
 
-        display(authorTitle, getState(state).infoQuote.quoteAuthor);
-        display(listQuotes, htmlList, "innerHTML");
-      });
+    const htmlList = data.reduce(
+      (acc, quote) =>
+        (acc += toHTML("li", `"${quote.quoteText}"`, "class=blockquote")),
+      ""
+    );
+
+    display(authorTitle, getState(state).infoQuote.quoteAuthor);
+    display(listQuotes, htmlList, "innerHTML");
   });
 };
 
