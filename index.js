@@ -1,6 +1,8 @@
 const toJSON = (x) => x.json();
 const toHTML = (tag, x, attr = "") => `<${tag} ${attr}>${x}</${tag}>`;
-const display = (el, content, method = "textContent") => (el[method] = content);
+const display = (el, content, method = "textContent") => {
+  el[method] = content;
+};
 const applyCss = (el, prop, value) => (el.style[prop] = value);
 const getState = (state) => JSON.parse(JSON.stringify(state));
 const setState = (state, newState) => {
@@ -28,43 +30,42 @@ const app = () => {
   const sectionQuote = document.getElementById("quote");
   const sectionAuthorQuotes = document.getElementById("authorQuotes");
 
-  const displayQuote = async () => {
-    const {
-      data: [quote],
-    } = getBlockQuote().random;
+  const displayQuote = () => {
+    getBlockQuote().random.then(({ data: [quote] }) => {
+      applyCss(sectionQuote, "display", "flex");
+      applyCss(sectionAuthorQuotes, "display", "none");
 
-    applyCss(sectionQuote, "display", "flex");
-    applyCss(sectionAuthorQuotes, "display", "none");
+      setState(state, { infoQuote: quote });
 
-    setState(state, { infoQuote: quote });
-
-    display(blockQuote, `"${getState(state).infoQuote.quoteText}"`);
-    display(
-      authorText,
-      `${getState(state).infoQuote.quoteAuthor}
+      display(blockQuote, `"${getState(state).infoQuote.quoteText}"`);
+      display(
+        authorText,
+        `${getState(state).infoQuote.quoteAuthor}
         <span class="material-icons">trending_flat</span>
         `,
-      "innerHTML"
-    );
+        "innerHTML"
+      );
+    });
   };
 
   displayQuote();
 
   randomBtn.addEventListener("click", displayQuote);
 
-  authorText.addEventListener("click", async () => {
-    const { data } = await getBlockQuote().byAuthor(
-      `author=${getState(state).infoQuote.quoteAuthor}`
-    );
-    applyCss(sectionAuthorQuotes, "display", "block");
-    applyCss(sectionQuote, "display", "none");
+  authorText.addEventListener("click", () => {
+    getBlockQuote()
+      .byAuthor(`author=${getState(state).infoQuote.quoteAuthor}`)
+      .then(({ data }) => {
+        applyCss(sectionAuthorQuotes, "display", "block");
+        applyCss(sectionQuote, "display", "none");
 
-    const htmlList = data
-      .map((quote) => toHTML("li", quote.quoteText, "class=blockquote"))
-      .join("");
+        const htmlList = data
+          .map((quote) => toHTML("li", quote.quoteText, "class=blockquote"))
+          .join("");
 
-    display(authorTitle, getState(state).infoQuote.quoteAuthor);
-    display(listQuotes, htmlList, "innerHTML");
+        display(authorTitle, getState(state).infoQuote.quoteAuthor);
+        display(listQuotes, htmlList, "innerHTML");
+      });
   });
 };
 
