@@ -32,7 +32,7 @@
 
 ## Overview
 
-![screenshot](.github/screenshot.png)
+![screenshot](./github/screenshot.png)
 
 ### Built With
 
